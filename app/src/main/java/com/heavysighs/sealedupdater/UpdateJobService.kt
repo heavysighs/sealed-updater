@@ -24,21 +24,26 @@ class UpdateJobService : JobService() {
         private const val JOB_ID = 4711
 
         fun schedule(context: Context) {
+            val prefs = context.getSharedPreferences("updater", Context.MODE_PRIVATE)
             try {
                 val scheduler =
                     context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as? JobScheduler
                         ?: return
-                if (scheduler.getPendingJob(JOB_ID) != null) return
+                if (scheduler.getPendingJob(JOB_ID) != null) {
+                    prefs.edit().remove("scheduleError").apply()
+                    return
+                }
                 val job = JobInfo.Builder(JOB_ID, ComponentName(context, UpdateJobService::class.java))
                     .setPeriodic(12 * 60 * 60 * 1000L)
                     .setPersisted(true)
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .build()
                 scheduler.schedule(job)
+                prefs.edit().remove("scheduleError").apply()
             } catch (ex: Exception) {
                 // Scheduling must never take the app down with it. Record the
                 // failure where the status screen can show it instead.
-                context.getSharedPreferences("updater", Context.MODE_PRIVATE).edit()
+                prefs.edit()
                     .putString("scheduleError", "${ex.javaClass.simpleName}: ${ex.message}")
                     .apply()
             }
