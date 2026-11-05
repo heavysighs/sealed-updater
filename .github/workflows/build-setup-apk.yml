@@ -1,0 +1,19 @@
+name: Build SETUP APK
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build SETUP release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease -PsetupMode=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sealed-updater-setup-apk
+          path: app/build/outputs/apk/release/app-release.apk
