@@ -17,8 +17,8 @@ android {
         applicationId = "com.heavysighs.sealedupdater"
         minSdk = 29
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.5"
+        versionCode = 7
+        versionName = "1.6"
         if (setupMode) versionNameSuffix = "-setup"
         buildConfigField("boolean", "SETUP_MODE", setupMode.toString())
         manifestPlaceholders["appLabel"] =
