@@ -54,3 +54,8 @@ before it is installed.
   installed over it and the setup capability is gone. The launcher label of
   the setup build reads "Sealed Updater (Setup)" so the two can never be
   confused on the phone.
+
+When the signed list names an earlier version of an app ("previous"), the
+SETUP build installs that earlier version first instead of the current one -
+so the update to current can be exercised afterwards, under the MDM
+restrictions, before anything is sealed.
