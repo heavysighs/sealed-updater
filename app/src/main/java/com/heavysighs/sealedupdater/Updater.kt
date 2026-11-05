@@ -126,46 +126,87 @@ object Updater {
         } catch (ex: Exception) {
             null
         }
-        if (installed == null && !BuildConfig.SETUP_MODE) {
-            note("$pkg: not installed, skipped")
-            return false
+        if (installed == null) {
+            if (!BuildConfig.SETUP_MODE) {
+                note("$pkg: not installed, skipped")
+                return false
+            }
+            // SETUP build, first install. When the signed list names an
+            // earlier version ("previous"), install that instead, so the
+            // update to the current version can be tested afterwards -
+            // including under the MDM restrictions. Same signer required.
+            val prev = e.optJSONObject("previous")
+            if (prev != null && prev.getLong("versionCode") < newVc &&
+                prev.getString("certSha256") == e.getString("certSha256")
+            ) {
+                note("$pkg: SETUP install of earlier version ${prev.getLong("versionCode")}, downloading...")
+                return downloadVerifyInstall(
+                    context, pkg, prev.getLong("versionCode"), prev.getString("url"),
+                    prev.getString("sha256"), prev.getString("certSha256"), null, note
+                )
+            }
+            note("$pkg: SETUP install of $newVc, downloading...")
+            return downloadVerifyInstall(
+                context, pkg, newVc, e.getString("url"), e.getString("sha256"),
+                e.getString("certSha256"), null, note
+            )
         }
         // Check 3: actually newer
-        if (installed != null && newVc <= installed.longVersionCode) {
+        if (newVc <= installed.longVersionCode) {
             note("$pkg: up to date (${installed.longVersionCode})")
             return false
         }
-        note(
-            if (installed == null) "$pkg: SETUP install of $newVc, downloading..."
-            else "$pkg: update ${installed.longVersionCode} -> $newVc, downloading..."
+        note("$pkg: update ${installed.longVersionCode} -> $newVc, downloading...")
+        return downloadVerifyInstall(
+            context, pkg, newVc, e.getString("url"), e.getString("sha256"),
+            e.getString("certSha256"), certSha256(installed), note
         )
+    }
+
+    /**
+     * Checks 4 and 5 plus the install, shared by updates and by the SETUP
+     * build's first installs: download the APK, check its hash against the
+     * signed list, check it really is this app at this version, signed by
+     * the signer the list names - and, for updates, by the signer of the
+     * copy already installed too. Returns true if an install started.
+     */
+    private fun downloadVerifyInstall(
+        context: Context,
+        pkg: String,
+        vc: Long,
+        url: String,
+        sha256: String,
+        listCert: String,
+        installedCert: String?,
+        note: (String) -> Unit
+    ): Boolean {
         val apk = File(context.cacheDir, "update-$pkg.apk")
-        downloadTo(e.getString("url"), apk)
+        downloadTo(url, apk)
 
         // Check 4: file hash matches the signed list
-        if (sha256Hex(apk) != e.getString("sha256")) {
+        if (sha256Hex(apk) != sha256) {
             note("$pkg: APK hash mismatch, refused")
             apk.delete()
             return false
         }
         // Check 5: the APK really is this app, this version, signed by
-        // the signer named in the list AND by the signer of the copy
-        // already installed (genuine upstream updates only).
+        // the signer named in the list AND (for updates) by the signer of
+        // the copy already installed (genuine upstream updates only).
         val archive = context.packageManager.getPackageArchiveInfo(
             apk.absolutePath, PackageManager.GET_SIGNING_CERTIFICATES
         )
-        if (archive == null || archive.packageName != pkg || archive.longVersionCode != newVc) {
+        if (archive == null || archive.packageName != pkg || archive.longVersionCode != vc) {
             note("$pkg: APK identity mismatch, refused")
             apk.delete()
             return false
         }
         val newCert = certSha256(archive)
-        if (newCert != e.getString("certSha256")) {
+        if (newCert != listCert) {
             note("$pkg: signer is not the one named in the signed list, refused")
             apk.delete()
             return false
         }
-        if (installed != null && newCert != certSha256(installed)) {
+        if (installedCert != null && newCert != installedCert) {
             note("$pkg: signer differs from the installed app, refused")
             apk.delete()
             return false
