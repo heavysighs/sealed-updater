@@ -42,3 +42,15 @@ before it is installed.
 - Add the LIST_SIGNING_KEY secret; enable the watcher schedule.
 - Network slit for this app in Rethink: raw.githubusercontent.com,
   github.com, objects.githubusercontent.com, f-droid.org.
+
+## Two builds (same app, same key)
+
+- **Normal build** ("Build APK" workflow): updates only. This is the sealed build.
+- **SETUP build** ("Build SETUP APK" workflow): additionally installs the first
+  copy of each allowlisted app when it is missing - same signature, hash and
+  signer verification, nothing else changes. It exists for setup day only: it
+  first-installs the eight apps so this app becomes their installer of record
+  (which is what makes later updates silent), then the normal build is
+  installed over it and the setup capability is gone. The launcher label of
+  the setup build reads "Sealed Updater (Setup)" so the two can never be
+  confused on the phone.
