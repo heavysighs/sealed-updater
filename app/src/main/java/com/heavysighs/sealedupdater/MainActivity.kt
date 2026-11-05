@@ -21,7 +21,6 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        UpdateJobService.schedule(applicationContext)
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -54,6 +53,9 @@ class MainActivity : Activity() {
         layout.addView(button)
         layout.addView(ScrollView(this).apply { addView(statusView) })
         setContentView(layout)
+        // Schedule only once the UI exists, so a scheduler problem can
+        // never stop the app from opening.
+        UpdateJobService.schedule(applicationContext)
         refreshStatus()
     }
 
@@ -66,10 +68,13 @@ class MainActivity : Activity() {
         val prefs = getSharedPreferences("updater", MODE_PRIVATE)
         val at = prefs.getLong("lastRunAt", 0)
         val last = prefs.getString("lastRun", null)
-        statusView.text = if (at == 0L || last == null) {
+        var text = if (at == 0L || last == null) {
             "No check has run yet."
         } else {
             "Last check: ${DateFormat.getDateTimeInstance().format(Date(at))}\n\n$last"
         }
+        val schedErr = prefs.getString("scheduleError", null)
+        if (schedErr != null) text += "\n\nScheduler error: $schedErr"
+        statusView.text = text
     }
 }
