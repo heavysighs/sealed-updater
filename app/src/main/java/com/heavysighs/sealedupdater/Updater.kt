@@ -117,22 +117,28 @@ object Updater {
             note("$pkg: not on the allowlist, skipped")
             return false
         }
-        // Check 2: already installed (updates only, never new apps)
+        // Check 2: already installed. The sealed build only ever updates;
+        // the SETUP build (setup day only) may also install the first copy,
+        // verified exactly the same way, so it becomes the installer of
+        // record and later updates go through silently.
         val installed = try {
             context.packageManager.getPackageInfo(pkg, PackageManager.GET_SIGNING_CERTIFICATES)
         } catch (ex: Exception) {
             null
         }
-        if (installed == null) {
+        if (installed == null && !BuildConfig.SETUP_MODE) {
             note("$pkg: not installed, skipped")
             return false
         }
         // Check 3: actually newer
-        if (newVc <= installed.longVersionCode) {
+        if (installed != null && newVc <= installed.longVersionCode) {
             note("$pkg: up to date (${installed.longVersionCode})")
             return false
         }
-        note("$pkg: update ${installed.longVersionCode} -> $newVc, downloading...")
+        note(
+            if (installed == null) "$pkg: SETUP install of $newVc, downloading..."
+            else "$pkg: update ${installed.longVersionCode} -> $newVc, downloading..."
+        )
         val apk = File(context.cacheDir, "update-$pkg.apk")
         downloadTo(e.getString("url"), apk)
 
@@ -159,7 +165,7 @@ object Updater {
             apk.delete()
             return false
         }
-        if (newCert != certSha256(installed)) {
+        if (installed != null && newCert != certSha256(installed)) {
             note("$pkg: signer differs from the installed app, refused")
             apk.delete()
             return false

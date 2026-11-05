@@ -27,12 +27,18 @@ class MainActivity : Activity() {
             setPadding(48, 48, 48, 48)
         }
         val title = TextView(this).apply {
-            text = "Sealed Updater"
+            text = if (BuildConfig.SETUP_MODE) "Sealed Updater - SETUP" else "Sealed Updater"
             textSize = 22f
         }
         val sub = TextView(this).apply {
-            text = "Fetches one signed list from one fixed address and installs " +
-                "verified updates for the allowlisted apps only. There are no settings."
+            text = if (BuildConfig.SETUP_MODE) {
+                "SETUP build: installs the first copy of each allowlisted app " +
+                    "(verified the same way as updates), then updates after that. " +
+                    "Install the normal build over this one when setup is finished."
+            } else {
+                "Fetches one signed list from one fixed address and installs " +
+                    "verified updates for the allowlisted apps only. There are no settings."
+            }
             textSize = 14f
         }
         val button = Button(this).apply { text = "Check now" }
