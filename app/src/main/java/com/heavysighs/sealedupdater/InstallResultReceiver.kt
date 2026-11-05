@@ -16,7 +16,7 @@ class InstallResultReceiver : BroadcastReceiver() {
             // Only happens when the app does NOT hold the install delegation
             // (i.e. testing on an unsealed phone): show Android's prompt.
             @Suppress("DEPRECATION")
-            val confirm = intent.getParcelableExtra<Intent>(PackageInstaller.EXTRA_INTENT)
+            val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
             if (confirm != null) {
                 context.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
