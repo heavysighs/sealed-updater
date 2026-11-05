@@ -3,6 +3,13 @@
   {
    "certSha256": "acb5eddbb1bbc2d3cd125776eebab345c083c92b9db7f4a33e55f5d139dd0448",
    "package": "app.clearsms",
+   "previous": {
+    "certSha256": "acb5eddbb1bbc2d3cd125776eebab345c083c92b9db7f4a33e55f5d139dd0448",
+    "sha256": "7b527f1683f2803b07c857944ae4c8ed31a4291940669f296e46dea2163b5a7b",
+    "url": "https://github.com/itsluminous/ClearSMS/releases/download/v0.24.1/ClearSMS.apk",
+    "versionCode": 74,
+    "versionName": "0.24.1"
+   },
    "sha256": "d142f30a3d4b00ca8539e4dfb7be89874d5c99ddeae92aff013b1850edbb05eb",
    "url": "https://github.com/itsluminous/ClearSMS/releases/download/v0.25.0/ClearSMS.apk",
    "versionCode": 75,
@@ -11,6 +18,13 @@
   {
    "certSha256": "f5d8676eae57661a9a47d32c30fc72a48b4b6e6fa2947c26f5473e10fcf79982",
    "package": "com.guiforge.bati",
+   "previous": {
+    "certSha256": "f5d8676eae57661a9a47d32c30fc72a48b4b6e6fa2947c26f5473e10fcf79982",
+    "sha256": "c7e352d42d5e44cea73c3a00785862b4892e15471a2548e05578a7cf6ef5687d",
+    "url": "https://github.com/Guiforge/bati/releases/download/v2.13.3/bati-2.13.3.apk",
+    "versionCode": 21303,
+    "versionName": "2.13.3"
+   },
    "sha256": "932709a14b9ec04df397d51e52da08a875053b2733a123b8e7b4d3fb89adeeeb",
    "url": "https://github.com/Guiforge/bati/releases/download/v2.13.4/bati-2.13.4.apk",
    "versionCode": 21304,
@@ -27,6 +41,13 @@
   {
    "certSha256": "b0fe178efdc103235048baa333116b0fa43366ec2da053e42379745fa00dae1a",
    "package": "de.binauralbeats.app.foss",
+   "previous": {
+    "certSha256": "b0fe178efdc103235048baa333116b0fa43366ec2da053e42379745fa00dae1a",
+    "sha256": "9d5e9d92536cd11b8dde229f1f30054baa1e07740447d96024df4cdb553428e3",
+    "url": "https://github.com/mandres747/DeepWave/releases/download/v1.5.0/DeepWave-1.5.0-foss.apk",
+    "versionCode": 12,
+    "versionName": "1.5.0"
+   },
    "sha256": "bf3dd36ec54ce587ddcef1c1ba57fa96994a4e351dd517cb7195d05e4e195121",
    "url": "https://f-droid.org/repo/de.binauralbeats.app.foss_13.apk",
    "versionCode": 13,
@@ -35,6 +56,13 @@
   {
    "certSha256": "131b3899e1160941018c6ad717faca2a608729013e85af4ae870273bdac1919a",
    "package": "io.github.ronynn.karui",
+   "previous": {
+    "certSha256": "131b3899e1160941018c6ad717faca2a608729013e85af4ae870273bdac1919a",
+    "sha256": "4868a7a687c73d583ed747061d3e76ccc0c9c5049dca3d8db95ef9f1b67e2d82",
+    "url": "https://github.com/ronynn/karui/releases/download/2.1/karui-release.apk",
+    "versionCode": 11,
+    "versionName": "2.1"
+   },
    "sha256": "2500c0d08303ea05f79750905b24347600c9e8754c9e2cd0d98a32cc7dcf225f",
    "url": "https://github.com/ronynn/karui/releases/download/2.2/karui-release.apk",
    "versionCode": 12,
@@ -43,6 +71,13 @@
   {
    "certSha256": "c35601755756ecd887cf3f154d45a5b87c8dd19b6a044d411a7739e2b88c2de9",
    "package": "neth.iecal.curbox",
+   "previous": {
+    "certSha256": "c35601755756ecd887cf3f154d45a5b87c8dd19b6a044d411a7739e2b88c2de9",
+    "sha256": "5a91b8f75862789644f15b4e1fb1232db14c67318dcaf9e5459881e4f85c1977",
+    "url": "https://github.com/curbox-app/curbox-android/releases/download/4/curbox-4-fdroid.apk",
+    "versionCode": 4,
+    "versionName": "4-fdroid"
+   },
    "sha256": "1f477eb896125fd5ac4931eb7c896d23d27f8b2d577046da602d33173f1e8d8f",
    "url": "https://github.com/curbox-app/curbox-android/releases/download/6/curbox-6-fdroid.apk",
    "versionCode": 6,
@@ -51,6 +86,13 @@
   {
    "certSha256": "29d435f70aa9aec3c1faff7f7ffa6e15785088d87f06ecfcab9c3cc62dc269d8",
    "package": "org.breezyweather",
+   "previous": {
+    "certSha256": "29d435f70aa9aec3c1faff7f7ffa6e15785088d87f06ecfcab9c3cc62dc269d8",
+    "sha256": "adf3f31b5b011ec3ba95bf46161afe4c8c6548f4087c886d2132986ffb86b3c9",
+    "url": "https://github.com/breezy-weather/breezy-weather/releases/download/v6.2.1/breezy-weather-arm64-v8a-v6.2.1_standard.apk",
+    "versionCode": 60201,
+    "versionName": "6.2.1"
+   },
    "sha256": "829175ceb23d0e539f99b27d22ff10e06ba8d446ac070b28585a36316fd295d5",
    "url": "https://github.com/breezy-weather/breezy-weather/releases/download/v6.2.2/breezy-weather-arm64-v8a-v6.2.2_standard.apk",
    "versionCode": 60202,
@@ -59,6 +101,13 @@
   {
    "certSha256": "650399c893532c795de4ec20a88b0f88d8ed1ef4843ef13f3f768b4aa0e43031",
    "package": "xyz.linerly.nontrinsic",
+   "previous": {
+    "certSha256": "650399c893532c795de4ec20a88b0f88d8ed1ef4843ef13f3f768b4aa0e43031",
+    "sha256": "48e15677dc2a946a70bd9cc770fecda0464698768034077a014c6b4984a806a1",
+    "url": "https://f-droid.org/repo/xyz.linerly.nontrinsic_20260826.apk",
+    "versionCode": 20260826,
+    "versionName": "2026.08.26"
+   },
    "sha256": "0ddb90740de40c568abdbd38d1a94bfdb7d245133f8a3f122307d6ac21d1b31a",
    "url": "https://f-droid.org/repo/xyz.linerly.nontrinsic_20260930.apk",
    "versionCode": 20260930,
