@@ -1,0 +1,69 @@
+{
+ "apps": [
+  {
+   "certSha256": "acb5eddbb1bbc2d3cd125776eebab345c083c92b9db7f4a33e55f5d139dd0448",
+   "package": "app.clearsms",
+   "sha256": "d142f30a3d4b00ca8539e4dfb7be89874d5c99ddeae92aff013b1850edbb05eb",
+   "url": "https://github.com/itsluminous/ClearSMS/releases/download/v0.25.0/ClearSMS.apk",
+   "versionCode": 75,
+   "versionName": "0.25.0"
+  },
+  {
+   "certSha256": "f5d8676eae57661a9a47d32c30fc72a48b4b6e6fa2947c26f5473e10fcf79982",
+   "package": "com.guiforge.bati",
+   "sha256": "932709a14b9ec04df397d51e52da08a875053b2733a123b8e7b4d3fb89adeeeb",
+   "url": "https://github.com/Guiforge/bati/releases/download/v2.13.4/bati-2.13.4.apk",
+   "versionCode": 21304,
+   "versionName": "2.13.4"
+  },
+  {
+   "certSha256": "9749b89cadd4a9a3feefb7b571bdaa8f12bcddce0e20ba550d9d79e0b0e0f47e",
+   "package": "com.infinity.readz",
+   "sha256": "7f2faf73055a970296cbf955bbb59fc376bdfb2d60a6a01b676178268639831b",
+   "url": "https://github.com/ZHINFINITY/ReadInfinity/releases/download/v1.0.0/ReadInfinity_1.0.0_arm64-v8a.apk",
+   "versionCode": 1000000,
+   "versionName": "1.0.0"
+  },
+  {
+   "certSha256": "b0fe178efdc103235048baa333116b0fa43366ec2da053e42379745fa00dae1a",
+   "package": "de.binauralbeats.app.foss",
+   "sha256": "bf3dd36ec54ce587ddcef1c1ba57fa96994a4e351dd517cb7195d05e4e195121",
+   "url": "https://f-droid.org/repo/de.binauralbeats.app.foss_13.apk",
+   "versionCode": 13,
+   "versionName": "1.5.1"
+  },
+  {
+   "certSha256": "131b3899e1160941018c6ad717faca2a608729013e85af4ae870273bdac1919a",
+   "package": "io.github.ronynn.karui",
+   "sha256": "2500c0d08303ea05f79750905b24347600c9e8754c9e2cd0d98a32cc7dcf225f",
+   "url": "https://github.com/ronynn/karui/releases/download/2.2/karui-release.apk",
+   "versionCode": 12,
+   "versionName": "2.2"
+  },
+  {
+   "certSha256": "c35601755756ecd887cf3f154d45a5b87c8dd19b6a044d411a7739e2b88c2de9",
+   "package": "neth.iecal.curbox",
+   "sha256": "1f477eb896125fd5ac4931eb7c896d23d27f8b2d577046da602d33173f1e8d8f",
+   "url": "https://github.com/curbox-app/curbox-android/releases/download/6/curbox-6-fdroid.apk",
+   "versionCode": 6,
+   "versionName": "6-fdroid"
+  },
+  {
+   "certSha256": "29d435f70aa9aec3c1faff7f7ffa6e15785088d87f06ecfcab9c3cc62dc269d8",
+   "package": "org.breezyweather",
+   "sha256": "829175ceb23d0e539f99b27d22ff10e06ba8d446ac070b28585a36316fd295d5",
+   "url": "https://github.com/breezy-weather/breezy-weather/releases/download/v6.2.2/breezy-weather-arm64-v8a-v6.2.2_standard.apk",
+   "versionCode": 60202,
+   "versionName": "6.2.2"
+  },
+  {
+   "certSha256": "650399c893532c795de4ec20a88b0f88d8ed1ef4843ef13f3f768b4aa0e43031",
+   "package": "xyz.linerly.nontrinsic",
+   "sha256": "0ddb90740de40c568abdbd38d1a94bfdb7d245133f8a3f122307d6ac21d1b31a",
+   "url": "https://f-droid.org/repo/xyz.linerly.nontrinsic_20260930.apk",
+   "versionCode": 20260930,
+   "versionName": "2026.09.30"
+  }
+ ],
+ "version": 1
+}
