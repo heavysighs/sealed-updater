@@ -20,7 +20,7 @@
         <package android:name="com.infinity.readz" />
     </queries>
 
-    <application android:label="Sealed Updater"
+    <application android:label="${appLabel}"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
         <activity android:name=".MainActivity" android:exported="true">
