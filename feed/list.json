@@ -9,12 +9,12 @@
    "versionName": "0.25.0"
   },
   {
-   "certSha256": "521365292477cce37aec6440d4c020a5b43479885745e61cc1a127f800a314c2",
+   "certSha256": "f5d8676eae57661a9a47d32c30fc72a48b4b6e6fa2947c26f5473e10fcf79982",
    "package": "com.guiforge.bati",
-   "sha256": "8121a5a6e497874d5cfe192280fc859b6c058938a3cfb16bb1463fb12906ed41",
-   "url": "https://f-droid.org/repo/com.guiforge.bati_21303.apk",
-   "versionCode": 21303,
-   "versionName": "2.13.3"
+   "sha256": "932709a14b9ec04df397d51e52da08a875053b2733a123b8e7b4d3fb89adeeeb",
+   "url": "https://github.com/Guiforge/bati/releases/download/v2.13.4/bati-2.13.4.apk",
+   "versionCode": 21304,
+   "versionName": "2.13.4"
   },
   {
    "certSha256": "9749b89cadd4a9a3feefb7b571bdaa8f12bcddce0e20ba550d9d79e0b0e0f47e",
