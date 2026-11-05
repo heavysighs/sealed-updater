@@ -1,0 +1,28 @@
+name: Watch for app updates
+# Manual only for now. After the on-phone test passes, add:
+#   schedule:
+#     - cron: '17 */6 * * *'
+on: workflow_dispatch
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install cryptography
+      - name: Run watcher
+        env:
+          LIST_SIGNING_KEY: ${{ secrets.LIST_SIGNING_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/watch.py
+      - name: Commit feed changes
+        run: |
+          git config user.name "sealed-updater-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add feed/list.json feed/list.json.sig
+          git diff --cached --quiet || git commit -m "Feed update"
+          git push
