@@ -31,6 +31,7 @@ SIG = FEED + ".sig"
 # Where each app officially publishes. This is the ONLY place per-app
 # knowledge lives; the phone app knows none of it.
 GITHUB_SOURCES = [
+    ("com.guiforge.bati", "Guiforge/bati", r"^bati-.*\.apk$"),
     ("app.clearsms", "itsluminous/ClearSMS", r"^ClearSMS\.apk$"),
     ("neth.iecal.curbox", "curbox-app/curbox-android", r"^curbox-.*-fdroid\.apk$"),
     ("io.github.ronynn.karui", "ronynn/karui", r"^karui-release\.apk$"),
@@ -39,9 +40,6 @@ GITHUB_SOURCES = [
      r"^breezy-weather-arm64-v8a-.*_standard\.apk$"),
 ]
 FDROID_SOURCES = [
-    # Bati: the copy on the phone is F-Droid-signed, and Android only accepts
-    # updates from the same signer, so Bati updates must come from F-Droid.
-    "com.guiforge.bati",
     "de.binauralbeats.app.foss",
     "xyz.linerly.nontrinsic",
 ]
@@ -164,6 +162,12 @@ def main():
                 print(f"ALARM: {pkg}: SIGNING CERT CHANGED - refusing to publish. "
                       f"Old {old['certSha256'][:12]}... new {info['certSha256'][:12]}...")
                 continue
+            # Carry a still-valid "previous" (setup-test) entry through.
+            if old and old.get("previous"):
+                prev = old["previous"]
+                if (prev["versionCode"] < info["versionCode"]
+                        and prev["certSha256"] == info["certSha256"]):
+                    info["previous"] = prev
             info["url"] = url
             current[pkg] = info
             changed = True
