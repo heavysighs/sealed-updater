@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Package visibility: the only apps this updater may ever look at. -->
+    <queries>
+        <package android:name="com.guiforge.bati" />
+        <package android:name="org.breezyweather" />
+        <package android:name="app.clearsms" />
+        <package android:name="neth.iecal.curbox" />
+        <package android:name="de.binauralbeats.app.foss" />
+        <package android:name="io.github.ronynn.karui" />
+        <package android:name="xyz.linerly.nontrinsic" />
+        <package android:name="com.infinity.readz" />
+    </queries>
+
+    <application android:label="Sealed Updater"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".UpdateJobService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name=".InstallResultReceiver" android:exported="false" />
+    </application>
+</manifest>
