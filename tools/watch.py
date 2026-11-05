@@ -81,12 +81,12 @@ def inspect_apk(path):
                          capture_output=True, text=True, check=True).stdout
     m = re.search(r"package: name='([^']+)' versionCode='(\d+)' versionName='([^']*)'", out)
     if not m:
-        sys.exit(f"ERROR: could not parse badging for {path}")
+        raise ValueError(f"could not parse badging for {path}")
     cert_out = subprocess.run([apksigner, "verify", "--print-certs", path],
                               capture_output=True, text=True, check=True).stdout
     cm = re.search(r"Signer #1 certificate SHA-256 digest: ([0-9a-f]+)", cert_out)
     if not cm:
-        sys.exit(f"ERROR: could not read signer cert for {path}")
+        raise ValueError(f"could not read signer cert for {path}")
     sha = hashlib.sha256(open(path, "rb").read()).hexdigest()
     return {
         "package": m.group(1),
@@ -99,9 +99,15 @@ def inspect_apk(path):
 
 def github_latest(repo, pattern, token):
     data = http_json(f"https://api.github.com/repos/{repo}/releases/latest", token)
-    for asset in data.get("assets", []):
-        if re.match(pattern, asset["name"]):
-            return asset["browser_download_url"]
+    matches = [a for a in data.get("assets", []) if re.match(pattern, a["name"])]
+    if len(matches) == 1:
+        return matches[0]["browser_download_url"]
+    if len(matches) > 1:
+        # Several assets match: only an unambiguous arm64 pick is acceptable.
+        arm = [a for a in matches if "arm64" in a["name"]]
+        if len(arm) == 1:
+            return arm[0]["browser_download_url"]
+        print(f"WARN: {repo}: {len(matches)} assets match {pattern}, ambiguous; skipping")
     return None
 
 
@@ -121,13 +127,20 @@ def main():
 
     candidates = []
     for pkg, repo, pattern in GITHUB_SOURCES:
-        url = github_latest(repo, pattern, token)
+        try:
+            url = github_latest(repo, pattern, token)
+        except Exception as e:  # one source being down must not stop the rest
+            print(f"WARN: {pkg}: source check failed ({e}); keeping old entry")
+            continue
         if url:
             candidates.append((pkg, url))
         else:
             print(f"WARN: no matching asset for {pkg} in {repo}")
     for pkg in FDROID_SOURCES:
-        candidates.append((pkg, fdroid_latest(pkg)))
+        try:
+            candidates.append((pkg, fdroid_latest(pkg)))
+        except Exception as e:
+            print(f"WARN: {pkg}: F-Droid check failed ({e}); keeping old entry")
 
     with tempfile.TemporaryDirectory() as tmp:
         for pkg, url in candidates:
