@@ -13,12 +13,14 @@ import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The whole updater in one object. Deliberately dumb:
  * fetch ONE signed list from ONE fixed address, verify it, and for each entry
  * run the same five checks before handing the file to the installer.
  * Any failed check means: no install, keep the current version.
+ * One app's failure never stops the others from being processed.
  */
 object Updater {
     private const val TAG = "SealedUpdater"
@@ -46,7 +48,22 @@ object Updater {
         "com.heavysighs.sealedupdater"
     )
 
+    // The scheduled job and a manual "Check now" must never run at once:
+    // both would write the same download files.
+    private val running = AtomicBoolean(false)
+
     fun runCheck(context: Context): String {
+        if (!running.compareAndSet(false, true)) {
+            return "A check is already running."
+        }
+        try {
+            return runCheckLocked(context)
+        } finally {
+            running.set(false)
+        }
+    }
+
+    private fun runCheckLocked(context: Context): String {
         val log = StringBuilder()
         fun note(s: String) {
             Log.i(TAG, s)
@@ -67,70 +84,89 @@ object Updater {
             var started = 0
             for (i in 0 until apps.length()) {
                 val e = apps.getJSONObject(i)
-                val pkg = e.getString("package")
-                val newVc = e.getLong("versionCode")
-
-                // Check 1: allowlist
-                if (pkg !in ALLOWLIST) {
-                    note("$pkg: not on the allowlist, skipped")
-                    continue
-                }
-                // Check 2: already installed (updates only, never new apps)
-                val installed = try {
-                    context.packageManager.getPackageInfo(pkg, PackageManager.GET_SIGNING_CERTIFICATES)
+                val pkg = try {
+                    e.getString("package")
                 } catch (ex: Exception) {
-                    null
-                }
-                if (installed == null) {
-                    note("$pkg: not installed, skipped")
+                    note("Feed entry $i has no package name, skipped")
                     continue
                 }
-                // Check 3: actually newer
-                if (newVc <= installed.longVersionCode) {
-                    note("$pkg: up to date (${installed.longVersionCode})")
-                    continue
+                try {
+                    if (processEntry(context, e, pkg) { note(it) }) started++
+                } catch (ex: Exception) {
+                    note("$pkg: check failed (${ex.javaClass.simpleName}: ${ex.message}), skipped")
                 }
-                note("$pkg: update ${installed.longVersionCode} -> $newVc, downloading...")
-                val apk = File(context.cacheDir, "update-$pkg.apk")
-                downloadTo(e.getString("url"), apk)
-
-                // Check 4: file hash matches the signed list
-                if (sha256Hex(apk) != e.getString("sha256")) {
-                    note("$pkg: APK hash mismatch, refused")
-                    apk.delete()
-                    continue
-                }
-                // Check 5: the APK really is this app, this version, signed by
-                // the signer named in the list AND by the signer of the copy
-                // already installed (genuine upstream updates only).
-                val archive = context.packageManager.getPackageArchiveInfo(
-                    apk.absolutePath, PackageManager.GET_SIGNING_CERTIFICATES
-                )
-                if (archive == null || archive.packageName != pkg || archive.longVersionCode != newVc) {
-                    note("$pkg: APK identity mismatch, refused")
-                    apk.delete()
-                    continue
-                }
-                val newCert = certSha256(archive)
-                if (newCert != e.getString("certSha256")) {
-                    note("$pkg: signer is not the one named in the signed list, refused")
-                    apk.delete()
-                    continue
-                }
-                if (newCert != certSha256(installed)) {
-                    note("$pkg: signer differs from the installed app, refused")
-                    apk.delete()
-                    continue
-                }
-                note("$pkg: verified, installing...")
-                Installer.install(context, apk, pkg)
-                started++
             }
             note("Done. Updates started: $started")
         } catch (ex: Exception) {
             note("Check failed: ${ex.javaClass.simpleName}: ${ex.message}")
         }
         return finish(context, log)
+    }
+
+    /** Runs the five checks for one feed entry. Returns true if an install started. */
+    private fun processEntry(
+        context: Context,
+        e: JSONObject,
+        pkg: String,
+        note: (String) -> Unit
+    ): Boolean {
+        val newVc = e.getLong("versionCode")
+
+        // Check 1: allowlist
+        if (pkg !in ALLOWLIST) {
+            note("$pkg: not on the allowlist, skipped")
+            return false
+        }
+        // Check 2: already installed (updates only, never new apps)
+        val installed = try {
+            context.packageManager.getPackageInfo(pkg, PackageManager.GET_SIGNING_CERTIFICATES)
+        } catch (ex: Exception) {
+            null
+        }
+        if (installed == null) {
+            note("$pkg: not installed, skipped")
+            return false
+        }
+        // Check 3: actually newer
+        if (newVc <= installed.longVersionCode) {
+            note("$pkg: up to date (${installed.longVersionCode})")
+            return false
+        }
+        note("$pkg: update ${installed.longVersionCode} -> $newVc, downloading...")
+        val apk = File(context.cacheDir, "update-$pkg.apk")
+        downloadTo(e.getString("url"), apk)
+
+        // Check 4: file hash matches the signed list
+        if (sha256Hex(apk) != e.getString("sha256")) {
+            note("$pkg: APK hash mismatch, refused")
+            apk.delete()
+            return false
+        }
+        // Check 5: the APK really is this app, this version, signed by
+        // the signer named in the list AND by the signer of the copy
+        // already installed (genuine upstream updates only).
+        val archive = context.packageManager.getPackageArchiveInfo(
+            apk.absolutePath, PackageManager.GET_SIGNING_CERTIFICATES
+        )
+        if (archive == null || archive.packageName != pkg || archive.longVersionCode != newVc) {
+            note("$pkg: APK identity mismatch, refused")
+            apk.delete()
+            return false
+        }
+        val newCert = certSha256(archive)
+        if (newCert != e.getString("certSha256")) {
+            note("$pkg: signer is not the one named in the signed list, refused")
+            apk.delete()
+            return false
+        }
+        if (newCert != certSha256(installed)) {
+            note("$pkg: signer differs from the installed app, refused")
+            apk.delete()
+            return false
+        }
+        note("$pkg: verified, installing...")
+        Installer.install(context, apk, pkg)
+        return true
     }
 
     private fun finish(context: Context, log: StringBuilder): String {
@@ -158,7 +194,7 @@ object Updater {
         c.connectTimeout = 30_000
         c.readTimeout = 120_000
         c.instanceFollowRedirects = true
-        c.setRequestProperty("User-Agent", "SealedUpdater/1.0")
+        c.setRequestProperty("User-Agent", "SealedUpdater/1.2")
         return c
     }
 
@@ -189,7 +225,7 @@ object Updater {
         val sigs = if (signing.hasMultipleSigners()) {
             signing.apkContentsSigners
         } else {
-            signing.signingCertificateHistory
+            signing.signingCertificateHistory ?: signing.apkContentsSigners
         }
         val first = sigs?.firstOrNull() ?: return ""
         return MessageDigest.getInstance("SHA-256").digest(first.toByteArray())

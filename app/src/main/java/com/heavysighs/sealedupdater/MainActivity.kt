@@ -75,6 +75,12 @@ class MainActivity : Activity() {
         }
         val schedErr = prefs.getString("scheduleError", null)
         if (schedErr != null) text += "\n\nScheduler error: $schedErr"
+        val lastInstall = prefs.getString("lastInstall", null)
+        val lastInstallAt = prefs.getLong("lastInstallAt", 0)
+        if (lastInstall != null) {
+            text += "\n\nLast install: " +
+                "${DateFormat.getDateTimeInstance().format(Date(lastInstallAt))}\n$lastInstall"
+        }
         statusView.text = text
     }
 }
