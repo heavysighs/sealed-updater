@@ -194,7 +194,7 @@ object Updater {
         c.connectTimeout = 30_000
         c.readTimeout = 120_000
         c.instanceFollowRedirects = true
-        c.setRequestProperty("User-Agent", "SealedUpdater/1.2")
+        c.setRequestProperty("User-Agent", "SealedUpdater/1.3")
         return c
     }
 
