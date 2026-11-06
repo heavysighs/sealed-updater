@@ -151,6 +151,18 @@ object Updater {
                 e.getString("certSha256"), null, note
             )
         }
+        // SETUP build only: an app sitting at the list's earlier version is
+        // in position for the update test - leave it there, do not update
+        // it yet. (First installs arrive one prompt at a time, so setup
+        // takes several Check now presses; this rule makes each press's
+        // progress stick instead of updating the app back to current.)
+        if (BuildConfig.SETUP_MODE) {
+            val prev = e.optJSONObject("previous")
+            if (prev != null && installed.longVersionCode == prev.getLong("versionCode")) {
+                note("$pkg: earlier version ${installed.longVersionCode} in position (setup), not updating yet")
+                return false
+            }
+        }
         // Check 3: actually newer
         if (newVc <= installed.longVersionCode) {
             note("$pkg: up to date (${installed.longVersionCode})")
